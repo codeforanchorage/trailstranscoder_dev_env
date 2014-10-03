@@ -1,0 +1,74 @@
+---
+- hosts: all
+  sudo: yes
+  remote_user: vagrant
+  vars:
+    dbuser: trailstrans
+    dbpass: trailstrans
+    trailstranscoderdir: /vagrant/trailstranscoder
+
+  tasks:
+    - name: Update apt cache
+      apt: update_cache=yes cache_valid_time=36000
+
+    - name: Install required system packages
+      apt: pkg={{ item }} state=installed
+      with_items:
+        - vim
+        - curl
+        - git
+        - htop
+        - build-essential
+        - python-all-dev
+        - python-setuptools
+        - gdal-bin
+        - python-gdal
+        - postgresql-9.3-postgis-2.1
+        - libpq-dev
+        - python-psycopg2
+        - libxslt-dev
+        - libxml2-dev
+        - nodejs
+
+    - name: Install pip
+      easy_install: name=pip
+
+    - name: Set up Postgresql
+      copy: src=postgresql.conf dest=/etc/postgresql/9.3/main/postgresql.conf
+
+    - name: Set up Postgresql (cont)
+      copy: src=pg_hba.conf dest=/etc/postgresql/9.3/main/pg_hba.conf
+
+    - name: Stop Postgres
+      service: name=postgresql state=stopped
+
+    - name: Start Postgres
+      service: name=postgresql state=started
+
+    # Thanks to https://gist.github.com/romanlv/91195b41087ba2d94eee
+    - name: Ensure template_postgis database exists
+      sudo_user: postgres
+      postgresql_db: name=template_postgis state=present
+      register: createdb_template_postgis
+
+    - name: Make template_postgis a template
+      sudo_user: postgres
+      command: psql -d template_postgis -c "update pg_database set datistemplate=true where datname='template_postgis';"
+      when: createdb_template_postgis.changed
+
+    - name: Enable postgis extension
+      sudo_user: postgres
+      command: psql -d template_postgis -c "create extension postgis;"
+      when: createdb_template_postgis.changed
+
+    - name: Ensure DB user is created
+      sudo_user: postgres
+      postgresql_user: name={{ dbuser }} password={{ dbpass }} role_attr_flags=createdb,superuser
+
+    - name: Get trailstranscoder
+      sudo: no
+      git: repo=https://github.com/codeforanchorage/trailstranscoder.git dest={{ trailstranscoderdir }}
+
+    - name: Install trailstranscoder dependencies
+      pip: requirements={{ trailstranscoderdir }}/requirements.txt
+
