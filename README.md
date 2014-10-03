@@ -20,7 +20,7 @@ Getting Started
 
 2. Clone this repository:
 
-        git clone https://github.com/codeforanchorage/trailsencoder_dev_env.git
+        git clone https://github.com/codeforanchorage/trailstranscoder_dev_env.git
 
 3. Launch vagrant (When prompted, the password is `vagrant`):
 
