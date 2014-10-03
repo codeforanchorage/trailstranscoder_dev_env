@@ -1,9 +1,9 @@
-Trailsencoder Development Environment
-=====================================
+Trailstranscoder Development Environment
+========================================
 
 This vagrant+ansible workflow should get you set up with a recent copy of
 Ubuntu, Postgres+Postgis, Python, and GDAL/OGR. The main purpose to provide an
-environment for working on [trailsencoder](https://github.com/codeforanchorage/trailsencoder).
+environment for working on [trailstranscoder](https://github.com/codeforanchorage/trailstranscoder).
 
 This is a work in progress, use at your own risk. Also, please keep in mind the
 settings and configurations employed here are for development purposes only ---
