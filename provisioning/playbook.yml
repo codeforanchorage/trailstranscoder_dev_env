@@ -22,6 +22,7 @@
         - python-all-dev
         - python-setuptools
         - gdal-bin
+        - libgdal-dev
         - python-gdal
         - postgresql-9.3-postgis-2.1
         - libpq-dev
