@@ -11,6 +11,9 @@
     - name: Update apt cache
       apt: update_cache=yes cache_valid_time=36000
 
+    - name: Add ubuntugis ppa
+      apt_repository: repo='ppa:ubuntugis/ubuntugis-unstable'
+
     - name: Install required system packages
       apt: pkg={{ item }} state=installed
       with_items:
